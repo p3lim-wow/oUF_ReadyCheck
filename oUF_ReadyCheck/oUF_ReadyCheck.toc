@@ -1,0 +1,8 @@
+## Interface: 30000
+## Author: p3lim, Starlon
+## Version: 30000.wowi:revision
+## Title: oUF ReadyCheck
+## Notes: ReadyCheck support for oUF layouts.
+## RequiredDeps: oUF
+
+oUF_ReadyCheck.lua
