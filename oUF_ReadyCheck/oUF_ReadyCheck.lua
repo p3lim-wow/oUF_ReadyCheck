@@ -63,6 +63,8 @@ local function Enable(self)
 		self:RegisterEvent('READY_CHECK', READY_CHECK)
 		self:RegisterEvent('READY_CHECK_CONFIRM', READY_CHECK_CONFIRM)
 		self:RegisterEvent('READY_CHECK_FINISHED', READY_CHECK_FINISHED)
+
+		return true
 	end
 end
 
