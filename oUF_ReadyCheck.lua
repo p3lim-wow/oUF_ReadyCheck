@@ -51,9 +51,12 @@ end
 local function update(self)
 	if(not IsRaidLeader() and not IsRaidOfficer() and not IsPartyLeader()) then return end
 
-	self.ReadyCheck:SetTexture(statusTexture[GetReadyCheckStatus(self.unit)])
-	self.ReadyCheck:SetAlpha(1)
-	self.ReadyCheck:Show()
+	local status = GetReadyCheckStatus(self.unit)
+	if(status) then
+		self.ReadyCheck:SetTexture(statusTexture[status])
+		self.ReadyCheck:SetAlpha(1)
+		self.ReadyCheck:Show()
+	end
 end
 
 local function prepare(self)
