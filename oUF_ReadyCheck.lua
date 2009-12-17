@@ -9,6 +9,9 @@
 
 	Add-on originally made by Starlon
 --]]
+local _, ns = ...
+local oUF = ns.oUF or oUF
+assert(oUF, 'oUF ReadyCheck was unable to locate oUF install')
 
 local GetReadyCheckStatus = GetReadyCheckStatus
 
