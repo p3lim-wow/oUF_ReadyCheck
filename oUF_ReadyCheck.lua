@@ -1,14 +1,3 @@
---[[
-
-	Elements handled:
-	 .ReadyCheck [texture]
-
-	Options:
-	 - delayTime [value] default: 10
-	 - fadeTime [value] default: 1.5
-
-	Add-on originally made by Starlon
---]]
 local _, ns = ...
 local oUF = ns.oUF or oUF
 assert(oUF, 'oUF ReadyCheck was unable to locate oUF install')
