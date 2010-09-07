@@ -2,62 +2,55 @@ local _, ns = ...
 local oUF = ns.oUF or oUF
 assert(oUF, 'oUF ReadyCheck was unable to locate oUF install')
 
-local GetReadyCheckStatus = GetReadyCheckStatus
+local OnUpdateDummy
+do
+	OnUpdateDummy = CreateFrame('Frame')
+	OnUpdateDummy.objects = {}
+	OnUpdateDummy:Hide()
+	OnUpdateDummy:SetScript('OnUpdate', function(self, elapsed)
+		if(self.elapsed <= 6) then
+			self.elapsed = self.elapsed + elapsed
 
-local statusTexture = {
-	notready = [=[Interface\RAIDFRAME\ReadyCheck-NotReady]=],
-	ready = [=[Interface\RAIDFRAME\ReadyCheck-Ready]=],
-	waiting = [=[Interface\RAIDFRAME\ReadyCheck-Waiting]=],
-}
-
-function onUpdate(self, elapsed)
-	if(self.finish) then
-		self.finish = self.finish - elapsed
-		if(self.finish <= 0) then
-			self.finish = nil
-		end
-	elseif(self.fade) then
-		self.fade = self.fade - elapsed
-		if(self.fade <= 0) then
-			self.fade = nil
-			self:SetScript('OnUpdate', nil)
-
-			for k, v in next, oUF.objects do
-				if(v.ReadyCheck and v.unit == self.unit) then
-					v.ReadyCheck:Hide()
-				end
+			for object in pairs(self.objects) do
+				object:SetAlpha(self.elapsed / 6)
 			end
 		else
-			for k, v in next, oUF.objects do
-				if(v.ReadyCheck and v.unit == self.unit) then
-					v.ReadyCheck:SetAlpha(self.fade / self.offset)
-				end
-			end
+			wipe(OnUpdateDummy.objects)
+			self:Hide()
 		end
-	end
+	end)
 end
 
-local function Update(self)
+local function Update(self, event)
 	if(not IsRaidLeader() and not IsRaidOfficer() and not IsPartyLeader()) then return end
+	local readycheck = self.ReadyCheck
+
+	if(event == 'READY_CHECK_FINISHED') then
+		if(readycheck:GetTexture() == READY_CHECK_WAITING_TEXTURE) then
+			readycheck:SetTexture(READY_CHECK_NOT_READY)
+		end
+
+		OnUpdateDummy.elapsed = 6
+		OnUpdateDummy.objects[readycheck] = true
+		OnUpdateDummy:Show()
+		return
+	end
 
 	local status = GetReadyCheckStatus(self.unit)
-	if(status) then
-		self.ReadyCheck:SetTexture(statusTexture[status])
-		self.ReadyCheck:SetAlpha(1)
-		self.ReadyCheck:Show()
+	if(not status) then
+		return readycheck:Hide()
 	end
-end
 
-local function prepare(self)
-	local readycheck = self.ReadyCheck
-	local dummy = readycheck.dummy
+	if(status == 'ready') then
+		readycheck:SetTexture(READY_CHECK_READY_TEXTURE)
+	elseif(status == 'notready') then
+		readycheck:SetTexture(READY_CHECK_NOT_READY_TEXTURE)
+	elseif(status == 'waiting') then
+		readycheck:SetTexture(READY_CHECK_WAITING_TEXTURE)
+	end
 
-	dummy.unit = self.unit
-	dummy.finish = readycheck.delayTime or 10
-	dummy.fade = readycheck.fadeTime or 1.5
-	dummy.offset = readycheck.fadeTime or 1.5
-
-	dummy:SetScript('OnUpdate', onUpdate)
+	readycheck:SetAlpha(1)
+	readycheck:Show()
 end
 
 local function Path(self, ...)
