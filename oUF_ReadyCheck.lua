@@ -37,7 +37,7 @@ function onUpdate(self, elapsed)
 	end
 end
 
-local function update(self)
+local function Update(self)
 	if(not IsRaidLeader() and not IsRaidOfficer() and not IsPartyLeader()) then return end
 
 	local status = GetReadyCheckStatus(self.unit)
@@ -60,25 +60,27 @@ local function prepare(self)
 	dummy:SetScript('OnUpdate', onUpdate)
 end
 
-local function enable(self)
+local function Path(self, ...)
+	return (self.ReadyCheck.Override or Update) (self, ...)
+end
+
+local function Enable(self)
 	local readycheck = self.ReadyCheck
 	if(readycheck) then
-		self:RegisterEvent('READY_CHECK', update)
-		self:RegisterEvent('READY_CHECK_CONFIRM', update)
-		self:RegisterEvent('READY_CHECK_FINISHED', prepare)
-
-		readycheck.dummy = CreateFrame('Frame', nil, self)
+		self:RegisterEvent('READY_CHECK', Path)
+		self:RegisterEvent('READY_CHECK_CONFIRM', Path)
+		self:RegisterEvent('READY_CHECK_FINISHED', Path)
 
 		return true
 	end
 end
 
-local function disable(self)
+local function Disable(self)
 	if(self.ReadyCheck) then
-		self:UnregisterEvent('READY_CHECK', update)
-		self:UnregisterEvent('READY_CHECK_CONFIRM', update)
-		self:UnregisterEvent('READY_CHECK_FINISHED', prepare)
+		self:UnregisterEvent('READY_CHECK', Path)
+		self:UnregisterEvent('READY_CHECK_CONFIRM', Path)
+		self:UnregisterEvent('READY_CHECK_FINISHED', Path)
 	end
 end
 
-oUF:AddElement('ReadyCheck', update, enable, disable)
+oUF:AddElement('ReadyCheck', Path, Enable, Disable)
