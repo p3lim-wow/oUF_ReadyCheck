@@ -1,4 +1,4 @@
-## Interface: 30200
+## Interface: 40000
 ## Author: p3lim
 ## Version: Alpha
 ## Title: oUF ReadyCheck
@@ -6,4 +6,3 @@
 ## RequiredDeps: oUF
 
 oUF_ReadyCheck.lua
-
