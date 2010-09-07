@@ -64,9 +64,16 @@ local function Path(self, ...)
 	return (self.ReadyCheck.Override or Update) (self, ...)
 end
 
+local function ForceUpdate(element)
+	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
+end
+
 local function Enable(self)
 	local readycheck = self.ReadyCheck
 	if(readycheck) then
+		readycheck.__owner = self
+		readycheck.ForceUpdate = ForceUpdate
+
 		self:RegisterEvent('READY_CHECK', Path)
 		self:RegisterEvent('READY_CHECK_CONFIRM', Path)
 		self:RegisterEvent('READY_CHECK_FINISHED', Path)
